@@ -6,7 +6,8 @@ const auth = async (req, res, next) => {
     const data = jwt.verify(token, 'jwtkey12175!$32#');
     try {
         const user = await User.findOne({
-            _id: data._id, 'tokens.token': token
+            _id: data._id,
+            'tokens.token': token
         });
         if (!user) {
             throw new Error();
@@ -20,3 +21,4 @@ const auth = async (req, res, next) => {
         });
     }
 }
+module.exports = auth;
