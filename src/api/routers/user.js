@@ -5,7 +5,7 @@ const auth = require('../middleware/auth')
 //test user route
 router.route('/').get(async (req, res) => {
     res.json({
-        message: 'This is Ahasan!!!'
+        message: 'This is test url!!!'
     });
 
 });
