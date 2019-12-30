@@ -55,6 +55,8 @@ router.route('/me').get(auth, async (req, res) => {
 
 }).put(auth, async (req, res) => {
     //update user profile
+    const updates=Object.keys(req.body);
+    const allowedUPdates=["name","email","age","password"]
 }).delete(auth, async (req, res) => {
     //delete user 
 
