@@ -12,8 +12,8 @@ const auth = async (req, res, next) => {
         if (!user) {
             throw new Error();
         }
-        res.user = user;
-        res.token = token;
+        req.user = user;
+        req.token = token;
         next();
     } catch (error) {
         res.status(401).send({
