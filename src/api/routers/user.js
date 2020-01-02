@@ -53,51 +53,54 @@ router.route('/login').post(async (req, res) => {
         })
     }
 });
-router.route('/me').get(auth, async (req, res) => {
-    //View logged in user profile
-    res.status(200).send(res.user);
+router.route('/me')
+    .get(auth, async (req, res) => {
+        //View logged in user profile
+        res.status(200).send(res.user);
 
-}).put(auth, async (req, res) => {
-    //update user profile
-    const updates = Object.keys(req.body);
-    const allowedUpdates = ["name", "email", "age", "password"];
-    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-    const _id = req.user._id;
+    })
+    .put(auth, async (req, res) => {
+        //update user profile
+        const updates = Object.keys(req.body);
+        const allowedUpdates = ["name", "email", "age", "password"];
+        const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+        const _id = req.user._id;
 
-    if (!isValidOperation)
-        res.status(400).send({
-            error: 'Invalid request'
-        });
-    if (!ObjectID.isValid(_id)) {
-        return res.status(404).send({
-            error: 'Invalid request'
-        });
-    }
-    try {
-        updates.forEach((update) => req.user[update] = req.body[update]);
-        await req.user.save();
-        res.status(201).send(req.user);
-    } catch (error) {
-        res.status(400).send({
-            error: 'Invalid request'
-        });
-    }
-}).delete(auth, async (req, res) => {
-    //delete user 
-    if (!ObjectID.isValid(req.user._id)) {
-        return res.status(404).send({
-            error: 'Invalid request'
-        });
-    }
-    try {
-        await req.user.remove();
-        req.send(req.user);
-    } catch (error) {
-        res.status(500).send({
-            error: 'Internal server error'
-        });
-    }
-});
+        if (!isValidOperation)
+            res.status(400).send({
+                error: 'Invalid request'
+            });
+        if (!ObjectID.isValid(_id)) {
+            return res.status(404).send({
+                error: 'Invalid request'
+            });
+        }
+        try {
+            updates.forEach((update) => req.user[update] = req.body[update]);
+            await req.user.save();
+            res.status(201).send(req.user);
+        } catch (error) {
+            res.status(400).send({
+                error: 'Invalid request'
+            });
+        }
+    })
+    .delete(auth, async (req, res) => {
+        //delete user 
+        if (!ObjectID.isValid(req.user._id)) {
+            return res.status(404).send({
+                error: 'Invalid request'
+            });
+        }
+        try {
+            await req.user.remove();
+            req.send(req.user);
+        } catch (error) {
+            res.status(500).send({
+                error: 'Internal server error'
+            });
+        }
+    });
 
 router.route('/logout').post(auth, async (req, res) => {
     try {
