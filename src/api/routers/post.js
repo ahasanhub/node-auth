@@ -57,10 +57,56 @@ router.route('/:id')
         }
     })
     .put(auth, async (req, res) => {
-
+        const postid = req.params.id;
+        const updates = Object.keys(req.body);
+        const allowedUpdates = ['description', 'title'];
+        const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+        if (isValidOperation) {
+            res.status(400).send({
+                error: 'Bad request'
+            });
+        }
+        try {
+            const post = await Post.findOne({
+                _id: postid,
+                author: req.user._id
+            })
+            if (!post) {
+                res.status(404).send({
+                    error: 'Content not found'
+                });
+            }
+            updates.forEach((update) => post[update] = req.body[update]);
+            await post.save();
+            res.send(post);
+        } catch (error) {
+            res.status(500).send({
+                error: error.message
+            });
+        }
     })
     .delete(auth, async (req, res) => {
-
+        const postId = req.params.id;
+        if (!ObjectID.isValid(postId)) {
+            return res.status(400).send({
+                error: 'Bad request'
+            });
+        }
+        try {
+            const deletePost = await Post.findOneAndDelete({
+                _id: postId,
+                author: req.user._id
+            });
+            if (!deletePost) {
+                return res.status(404).send({
+                    error: 'Content not found'
+                });
+            }
+        } catch (error) {
+            res.status(500).send({
+                error: 'Internal sever error'
+            })
+        }
     })
 
 
