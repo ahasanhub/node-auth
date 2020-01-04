@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const Post = require('../models/post')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -56,6 +57,11 @@ const userSchema = new mongoose.Schema({
     }
 
 });
+userSchema.virtual('posts', {
+    ref: 'Post',
+    localField: '_id',
+    foreignField: 'author'
+})
 //mongoose pre save middleware
 userSchema.pre('save', async function (next) {
     const user = this
@@ -64,11 +70,24 @@ userSchema.pre('save', async function (next) {
     }
     next()
 });
+//delete all posts before remove user
+userSchema.pre('remove', async function (next) {
+    const user = this
+    await Post.deleteMany({
+        author: user._id
+    })
+})
 //mongoose instance method
 userSchema.methods.generateAuthToken = async function () {
     const user = this
-    const token = jwt.sign({ _id: user._id }, 'jwtkey12175!$32#', { expiresIn: '7 days' });
-    user.tokens = user.tokens.concat({ token });
+    const token = jwt.sign({
+        _id: user._id
+    }, 'jwtkey12175!$32#', {
+        expiresIn: '7 days'
+    });
+    user.tokens = user.tokens.concat({
+        token
+    });
     await user.save();
     return token;
 }
@@ -90,6 +109,16 @@ userSchema.statics.findByCredentials = async (email, password) => {
         });
     }
     return user;
+}
+
+userSchema.methods.toJSON = function () {
+    const user = this
+    const userObj = user.toObject()
+
+    delete userObj.password
+    delete userObj.tokens
+
+    return userObj
 }
 
 const User = mongoose.model('User', userSchema);

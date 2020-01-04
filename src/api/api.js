@@ -4,5 +4,5 @@ const router = require('express').Router();
 //for all our resources
 router.use('/users', require('./routers/user'));
 router.use('/posts', require('./routers/post'));
-router.use('/posts', require('./routers/comment'));
+
 module.exports = router;

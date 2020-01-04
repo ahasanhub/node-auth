@@ -12,6 +12,7 @@ const postSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    published: Boolean,
     author: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,

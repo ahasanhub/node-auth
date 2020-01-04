@@ -23,9 +23,30 @@ router.route('/')
         }
     })
     .get(auth, async (req, res) => {
+        const match = {}
+        const sort = {}
+        if (req.query.published) {
+            match.published = req.query.published === 'true'
+        }
+        if (req.query.sortBy && req.query.orderBy) {
+            sort[req.query.sortBy] = req.query.orderBy === 'desc' ? -1 : 1;
+        }
         try {
-            const posts = await Post.find({})
-            res.status(200).send(posts);
+            //const _isPublished=req.query.published;
+            //const posts = await Post.find({})
+            //res.status(200).send(posts);
+
+            await req.user.populate({
+                path: 'posts',
+                match,
+                options: {
+                    limit: parseInt(req.query.limit),
+                    skip: parseInt(req.query.skip),
+                    sort
+                }
+            }).execPopulate();
+
+            res.status(200).send(req.user.posts);
         } catch (error) {
             res.status(500).send({
                 error: error.message
@@ -110,6 +131,48 @@ router.route('/:id')
         }
     })
 
+router.route('/:id/comment')
+    .post(auth, async (req, res) => {
+        const postId = req.params.id;
+        const userId = req.user._id;
+        if (!ObjectID.isValid(postId)) {
+            return res.status(400).send({
+                error: 'Bad request'
+            });
+        }
 
+        if (!ObjectID.isValid(userId)) {
+            return res.status(400).send({
+                error: 'Bad request'
+            });
+        }
+        const comment = new Comment({
+            ...req.body,
+            author: userId,
+            postId: postId
+        });
+        try {
+            await comment.save();
+            res.status(201).send(comment);
+        } catch (error) {
+            res.status(500).send({
+                error: 'Internal server error'
+            });
+        }
+    })
+    .get(auth, async (req, res) => {
+        try {
+            const postId = req.params.id;
+            const post = await Post.findOne({
+                _id: postId
+            });
+            await post.populate('comments').execPopulate();
+            res.status(200).send(post.comments);
+        } catch (error) {
+            res.status(500).send({
+                error: 'Internal server error'
+            });
+        }
+    })
 
 module.exports = router;
