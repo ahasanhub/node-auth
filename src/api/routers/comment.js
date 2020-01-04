@@ -7,7 +7,7 @@ const {
     ObjectID
 } = require('mongodb');
 
-router.route('/')
+router.route('/:id/comment')
     .post(auth, async (req, res) => {
         const postId = req.params.id;
         const userId = req.user._id;

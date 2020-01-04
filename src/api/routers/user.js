@@ -56,7 +56,7 @@ router.route('/login').post(async (req, res) => {
 router.route('/me')
     .get(auth, async (req, res) => {
         //View logged in user profile
-        res.status(200).send(res.user);
+        res.status(200).send(req.user);
 
     })
     .put(auth, async (req, res) => {

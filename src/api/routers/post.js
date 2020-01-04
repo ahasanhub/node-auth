@@ -50,6 +50,7 @@ router.route('/:id')
             if (!post) {
                 return res.status(200).send(post);
             }
+            res.status(200).send(post);
         } catch (error) {
             res.status(500).send({
                 error: 'Internal server error'
@@ -61,7 +62,7 @@ router.route('/:id')
         const updates = Object.keys(req.body);
         const allowedUpdates = ['description', 'title'];
         const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-        if (isValidOperation) {
+        if (!isValidOperation) {
             res.status(400).send({
                 error: 'Bad request'
             });
