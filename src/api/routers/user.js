@@ -1,5 +1,7 @@
 'use strict'
+
 const router = require('express').Router();
+const userController = require('../controllers/user');
 const User = require('../models/user');
 const auth = require('../middleware/auth');
 const {
@@ -7,28 +9,25 @@ const {
 } = require('mongodb');
 
 //test user route
-router.route('/').get(async (req, res) => {
-    res.json({
-        message: 'This is test url!!!'
-    });
-
-});
+router.route('/')
 //Register user
-router.route('/').post(async (req, res) => {
-    const user = new User(req.body);
-    try {
-        await user.save();
-        const token = await user.generateAuthToken();
-        res.status(201).send({
-            user,
-            token
-        });
-    } catch (error) {
-        res.status(400).send({
-            error: 'Bad request'
-        })
-    }
-});
+router.route('/')
+    .post(async (req, res) => {
+        const user = new User(req.body);
+        try {
+            await user.save();
+            const token = await user.generateAuthToken();
+            res.status(201).send({
+                user,
+                token
+            });
+        } catch (error) {
+            res.status(400).send({
+                error: 'Bad request'
+            })
+        }
+    })
+    .get(userController.getUsers);
 router.route('/login').post(async (req, res) => {
     //Login a registered user
     try {
