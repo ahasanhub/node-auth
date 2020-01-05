@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 //setup global middleware here
-
 module.exports = function (app) {
     app.use(cors());
     app.use(morgan('dev'));
