@@ -110,9 +110,10 @@ userSchema.statics.findByCredentials = async (email, password) => {
     }
     return user;
 }
-
+//remove password and tokens while send response
 userSchema.methods.toJSON = function () {
     const user = this
+    //toObject() return vanila object
     const userObj = user.toObject()
 
     delete userObj.password
