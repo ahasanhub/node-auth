@@ -1,8 +1,8 @@
 'use strict'
 const router = require('express').Router();
-//api router will mount other routers
-//for all our resources
-router.use('/users', require('./routes/user'));
-router.use('/posts', require('./routes/post'));
+const v1Route = require('./version/v1');
+
+//api route will mount other version routes
+router.use('/v1', v1Route);
 
 module.exports = router;
