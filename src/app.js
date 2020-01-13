@@ -4,7 +4,7 @@ const apiRoute = require('./api/api');
 //connect mongodb
 require('./db/mongoose')
 //set middleware
-require('./middleware/appMiddleware')(app);
+require('./middleware/app')(app);
 //set router
 app.use('/api', apiRoute);
 
