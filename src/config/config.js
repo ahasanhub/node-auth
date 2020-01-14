@@ -1,22 +1,26 @@
 'use strict';
 
-let _=require('lodash');
+const _ = require('lodash');
 
-let config={
-    dev:'development',
-    test:'testing',
-    prod:'production',
-    port:process.env.PORT || 3000
+const env = {
+  dev: 'development',
+  test: 'testing',
+  prod: 'production'
+}
+
+const defaultPort = 3000;
+
+let config = {
+  env: process.env.NODE_ENV || env.dev,
+  port: process.env.PORT || defaultPort
 };
-process.env.NODE_ENV=process.env.NODE_ENV  || config.dev;
-config.env=process.env.NODE_ENV;
 
 let envConfig;
 
 try {
-  envConfig=require('./' + config.env);
-  envConfig=envConfig || {};  
+  envConfig = require('./' + config.env);
+  envConfig = envConfig || {};
 } catch (e) {
-    envConfig={};
+  envConfig = {};
 }
-module.exports=_.merge(config,envConfig);
+module.exports = _.merge(config, envConfig);

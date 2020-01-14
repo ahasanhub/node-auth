@@ -1,4 +1,10 @@
+'use strict'
+//Environment variable config
+require('dotenv').config();
+var config = require('./src/config/config');
 const app = require('./src/app');
-const port = process.env.PORT || 3000;
+var logger = require('./src/util/logger');
 
-app.listen(port, () => console.log(`Server is run on port :${port}`));
+
+app.listen(config.port, () => console.log(`Server is run on port :${config.port}`));
+logger.log('listening on http://localhost:' + config.port);
